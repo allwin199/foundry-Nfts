@@ -58,7 +58,7 @@ contract MoodNft is ERC721 {
             revert MoodNft__CantFlipMoodIfNotOwner();
         }
         if (s_tokenIdToMood[_tokenId] == NFTState.HAPPY) {
-            s_tokenIdToMood[_tokenId] = NFTState.HAPPY;
+            s_tokenIdToMood[_tokenId] = NFTState.SAD;
         } else {
             s_tokenIdToMood[_tokenId] = NFTState.HAPPY;
         }
@@ -89,5 +89,9 @@ contract MoodNft is ERC721 {
         return string(abi.encodePacked(baseURI, Base64.encode(dataURI)));
 
         /// @dev refer https://docs.openzeppelin.com/contracts/4.x/utilities#base64
+    }
+
+    function getCurrentMood(uint256 _tokenId) public view returns (NFTState) {
+        return s_tokenIdToMood[_tokenId];
     }
 }
