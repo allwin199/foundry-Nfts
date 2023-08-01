@@ -50,15 +50,27 @@ contract MoodNftTest is Test {
         // );
     }
 
+    function test_FlipMood_RevertsIfNotCalledByOwner() public {
+        vm.prank(USER);
+        moodNft.mintNft();
+
+        vm.expectRevert(MoodNft.MoodNft__CantFlipMoodIfNotOwner.selector);
+        moodNft.flipMood(0);
+    }
+
     function test_FlipMood_WorksCorrectly() public {
         vm.startPrank(USER);
         moodNft.mintNft();
 
         moodNft.flipMood(0);
-        MoodNft.NFTState nftState = moodNft.getCurrentMood(0);
+        MoodNft.NFTState prevNftState = moodNft.getCurrentMood(0);
+        moodNft.flipMood(0);
+        MoodNft.NFTState currentNftState = moodNft.getCurrentMood(0);
+        moodNft.flipMood(0);
         vm.stopPrank();
 
-        assertEq(uint256(nftState), uint256(MoodNft.NFTState.SAD));
+        assertEq(uint256(prevNftState), uint256(MoodNft.NFTState.SAD));
+        assertEq(uint256(currentNftState), uint256(MoodNft.NFTState.HAPPY));
 
         string memory tokenUri = moodNft.tokenURI(0);
         assertEq(tokenUri, SAD_MOOD_URI);

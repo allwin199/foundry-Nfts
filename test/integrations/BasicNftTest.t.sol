@@ -4,6 +4,7 @@ pragma solidity ^0.8.18;
 import {Test, console2} from "forge-std/Test.sol";
 import {DeployBasicNft} from "../../script/DeployBasicNft.s.sol";
 import {BasicNft} from "../../src/BasicNft.sol";
+import {MintBasicNft} from "../../script/Interactions.s.sol";
 
 contract BasicNftTest is Test {
     BasicNft basicNft;
@@ -64,5 +65,12 @@ contract BasicNftTest is Test {
         //     keccak256(abi.encodePacked(basicNft.tokenURI(0))) ==
         //         keccak256(abi.encodePacked(TOKEN_URI))
         // );
+    }
+
+    function test_BasicNftCanBe_MintedUsingScript() public {
+        uint256 startingTokenCount = basicNft.getTokenCounter();
+        MintBasicNft mintBasicNft = new MintBasicNft();
+        mintBasicNft.mintNftOnContract(address(basicNft));
+        assertEq(basicNft.getTokenCounter(), startingTokenCount + 1);
     }
 }
