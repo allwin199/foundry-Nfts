@@ -21,7 +21,7 @@ contract MintBasicNft is Script {
     function mintNftOnContract(address _contractAddress) public {
         BasicNft basicNft = BasicNft(_contractAddress);
 
-        vm.startBroadcast(vm.envUint("PRIVATE_KEY"));
+        vm.startBroadcast();
         basicNft.mintNft(TOKEN_URI);
         vm.stopBroadcast();
 
