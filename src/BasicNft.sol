@@ -46,9 +46,7 @@ contract BasicNft is ERC721 {
     /// URIs are used to identify web pages, files, and other resources.
     /// @dev tokenURI is almost simliar to api endpoint hosted somewhere, it will return the `metadata` for the NFT
 
-    function tokenURI(
-        uint256 _tokenId
-    ) public view override returns (string memory) {
+    function tokenURI(uint256 _tokenId) public view override returns (string memory) {
         return s_tokenIdToUri[_tokenId];
     }
 }

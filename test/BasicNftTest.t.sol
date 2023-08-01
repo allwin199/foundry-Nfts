@@ -9,8 +9,7 @@ contract BasicNftTest is Test {
     BasicNft basicNft;
 
     address public USER = makeAddr("user");
-    string public constant TOKEN_URI =
-        "ipfs://bafybeietajviz34cqtxjuv74orhpakbi2th5qok5qscym4a5srskverxua/";
+    string public constant TOKEN_URI = "ipfs://bafybeietajviz34cqtxjuv74orhpakbi2th5qok5qscym4a5srskverxua/";
 
     function setUp() external {
         DeployBasicNft deployer = new DeployBasicNft();
