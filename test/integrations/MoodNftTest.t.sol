@@ -4,6 +4,7 @@ pragma solidity ^0.8.18;
 import {Test, console2} from "forge-std/Test.sol";
 import {DeployMoodNft} from "../../script/DeployMoodNft.s.sol";
 import {MoodNft} from "../../src/MoodNft.sol";
+import {MintMoodNft, FlipMoodNft} from "../../script/Interactions.s.sol";
 
 contract MoodNftTest is Test {
     string constant NFT_NAME = "Mood NFT";
@@ -74,5 +75,21 @@ contract MoodNftTest is Test {
 
         string memory tokenUri = moodNft.tokenURI(0);
         assertEq(tokenUri, SAD_MOOD_URI);
+    }
+
+    function test_MintMoodNftUsingScript() public {
+        uint256 tokenId = moodNft.getTokenCounter();
+        MintMoodNft mintMoodNft = new MintMoodNft();
+        mintMoodNft.mintNftOnContract(address(moodNft));
+        assertEq(moodNft.getTokenCounter(), tokenId + 1);
+    }
+
+    function test_FlipMoodNftUsingScript() public {
+        MintMoodNft mintMoodNft = new MintMoodNft();
+        FlipMoodNft flipMoodNft = new FlipMoodNft();
+        mintMoodNft.mintNftOnContract(address(moodNft));
+        flipMoodNft.flipMoodNft(address(moodNft));
+        console2.log(uint256(moodNft.getCurrentMood(0)));
+        assertEq(uint256(moodNft.getCurrentMood(0)), 1);
     }
 }
