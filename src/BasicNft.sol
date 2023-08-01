@@ -18,6 +18,8 @@ contract BasicNft is ERC721 {
     /// @dev unique nft is based on the contract address which basically represents the collection
     /// and then the `tokenId`
 
+    mapping(uint256 tokenId => string tokenUri) private s_tokenIdToUri;
+
     /*/////////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
     /////////////////////////////////////////////////////////////////////////////*/
@@ -30,7 +32,11 @@ contract BasicNft is ERC721 {
                                 Public Functions
     /////////////////////////////////////////////////////////////////////////////*/
 
-    function mintNft() public {
+    /// @dev forEach unique tokenId, tokenUri will be mapped.
+    /// @dev tokenUri will contain the metadata of the unique NFT
+    /// @dev finally the nft will be minted based upon the tokenId
+    function mintNft(string memory _tokenUri) public {
+        s_tokenIdToUri[s_tokenCounter] = _tokenUri;
         _safeMint(msg.sender, s_tokenCounter);
         s_tokenCounter = s_tokenCounter + 1;
     }
@@ -43,6 +49,6 @@ contract BasicNft is ERC721 {
     function tokenURI(
         uint256 _tokenId
     ) public view override returns (string memory) {
-        return "";
+        return s_tokenIdToUri[_tokenId];
     }
 }
