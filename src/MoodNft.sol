@@ -29,6 +29,11 @@ contract MoodNft is ERC721 {
     string private s_sadSvgImageUri;
 
     /*/////////////////////////////////////////////////////////////////////////////
+                                CUSTOM ERRORS
+    /////////////////////////////////////////////////////////////////////////////*/
+    error MoodNft__CantFlipMoodIfNotOwner();
+
+    /*/////////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
     /////////////////////////////////////////////////////////////////////////////*/
     constructor(string memory _happySvgImageUri, string memory _sadSvgImageUri) ERC721("Mood NFT", "MN") {
@@ -41,10 +46,22 @@ contract MoodNft is ERC721 {
                                 Public Functions
     /////////////////////////////////////////////////////////////////////////////*/
     /// @dev mood is deffault to Happy
-    function mintNft(string memory _tokenUri) public {
+    function mintNft() public {
         _safeMint(msg.sender, s_tokenCounter);
         s_tokenIdToMood[s_tokenCounter] = NFTState.HAPPY;
         s_tokenCounter = s_tokenCounter + 1;
+    }
+
+    /// @dev only the NFT owner can change the mood
+    function flipMood(uint256 _tokenId) public {
+        if (!_isApprovedOrOwner(msg.sender, _tokenId)) {
+            revert MoodNft__CantFlipMoodIfNotOwner();
+        }
+        if (s_tokenIdToMood[_tokenId] == NFTState.HAPPY) {
+            s_tokenIdToMood[_tokenId] = NFTState.HAPPY;
+        } else {
+            s_tokenIdToMood[_tokenId] = NFTState.HAPPY;
+        }
     }
 
     function tokenURI(uint256 _tokenId) public view override returns (string memory) {
@@ -56,10 +73,11 @@ contract MoodNft is ERC721 {
             imageURI = s_sadSvgImageUri;
         }
 
+        string memory baseURI = "data:application/json;base64,";
+
         bytes memory dataURI = abi.encodePacked(
             '{"name":"',
             name(),
-            _tokenId,
             '", "description":"An NFT that reflects the mood of the owner, 100% on Chain!", ',
             '"attributes": [{"trait_type": "moodiness", "value": 100}], "image":"',
             imageURI,
@@ -68,7 +86,7 @@ contract MoodNft is ERC721 {
 
         /// @dev we are converting it to bytes to use openzeppelin base64 encoder
 
-        return string(abi.encodePacked("data:application/json;base64,", Base64.encode(dataURI)));
+        return string(abi.encodePacked(baseURI, Base64.encode(dataURI)));
 
         /// @dev refer https://docs.openzeppelin.com/contracts/4.x/utilities#base64
     }
